@@ -26,10 +26,10 @@ const listSlice = createSlice({
       );
     },
     editStudents(state, action) {
-      state.students = state.students.map((stu) =>
-        stu.id == state.students.id
-          ? [...state.students, (state.students.name = action.payload)]
-          : stu
+      // Expect action.payload to be an object with id and new name
+      const { id, name } = action.payload;
+      state.students = state.students.map((student) =>
+        student.id === id ? { ...student, name: name } : student
       );
     },
   },

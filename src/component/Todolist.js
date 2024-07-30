@@ -6,7 +6,7 @@ export default function Todolist() {
   const students = useSelector((state) => state.students.students);
   const dispatch = useDispatch();
   //
-  const [isEdit, setIsEdit] = useState({ id: "", flag: false });
+  const [isEdit, setIsEdit] = useState({ id: null, flag: false });
   const [text, setText] = useState("");
   const handle_add = (text) => {
     dispatch(addStudents(text));
@@ -29,21 +29,27 @@ export default function Todolist() {
       <button onClick={() => setFlag("")}>Clear</button>
       {filterStudent(students, flag).map((item, index) => (
         <div key={index}>
-          {!isEdit.flag && isEdit.id == item.id ? (
-            <p onDoubleClick={() => setIsEdit({ id: item.id, flag: true })}>
-              {item.name}
-            </p>
-          ) : (
+          {!isEdit.flag && isEdit.id === item.id ? (
             <input
               value={text}
-              onChange={(e) => e.target.value}
+              onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  dispatch(editStudents(item.id, text));
-                  setText("");
+                  dispatch(editStudents({ id: item.id, name: text }));
+                  setText(""); // Clear the input field
+                  setIsEdit({ id: null, flag: true }); // Reset edit state after saving
                 }
               }}
             />
+          ) : (
+            <p
+              onDoubleClick={() => {
+                setText(item.name); // Set the initial text to current item name
+                setIsEdit({ id: item.id, flag: false });
+              }}
+            >
+              {item.name}
+            </p>
           )}
           <button onClick={() => dispatch(deleteStudents(item.id))}>
             Delete
